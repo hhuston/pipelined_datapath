@@ -283,17 +283,13 @@
       <a name="label" val="Instruction_Memory"/>
       <a name="labelvisible" val="true"/>
     </comp>
-    <comp loc="(1350,270)" name="IFID">
-      <a name="facing" val="east"/>
-    </comp>
+    <comp loc="(1350,270)" name="IFID"/>
     <comp loc="(1830,330)" name="register_file"/>
     <comp loc="(2220,450)" name="Control_Unit"/>
     <comp loc="(2460,270)" name="IDEX"/>
     <comp loc="(2580,210)" name="ALU_Control"/>
     <comp loc="(2650,810)" name="Clocks"/>
-    <comp loc="(2770,360)" name="ALU">
-      <a name="facing" val="east"/>
-    </comp>
+    <comp loc="(2770,360)" name="ALU"/>
     <comp loc="(3330,270)" name="EXME"/>
     <comp loc="(3530,350)" name="Clocks"/>
     <comp loc="(360,280)" name="Clocks"/>
@@ -2745,5 +2741,79 @@
     <wire from="(620,170)" to="(660,170)"/>
     <wire from="(620,190)" to="(660,190)"/>
     <wire from="(680,80)" to="(680,130)"/>
+  </circuit>
+  <circuit name="Hazard_Detection_Unit">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="Hazard_Detection_Unit"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="2.0"/>
+    <appear>
+      <polygon fill="#4ce5ff" points="89,111 109,111 119,121 119,141 109,151 89,151 79,141 79,121" stroke="#4686ff" stroke-width="3"/>
+      <text dominant-baseline="central" font-family="SansSerif" font-size="8" text-anchor="middle" x="98" y="121">Hazard</text>
+      <text dominant-baseline="central" font-family="SansSerif" font-size="8" text-anchor="middle" x="21" y="182"/>
+      <text dominant-baseline="central" font-family="SansSerif" font-size="8" text-anchor="middle" x="31" y="192"/>
+      <text dominant-baseline="central" font-family="SansSerif" font-size="8" text-anchor="middle" x="99" y="130">Detection</text>
+      <text dominant-baseline="central" font-family="SansSerif" font-size="8" text-anchor="middle" x="98" y="139">Unit</text>
+      <circ-anchor facing="east" x="120" y="130"/>
+      <circ-port dir="in" pin="570,290" x="90" y="110"/>
+      <circ-port dir="in" pin="570,320" x="80" y="120"/>
+      <circ-port dir="in" pin="570,350" x="80" y="140"/>
+      <circ-port dir="in" pin="570,400" x="90" y="150"/>
+      <circ-port dir="out" pin="880,340" x="120" y="130"/>
+    </appear>
+    <comp lib="0" loc="(570,290)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="IFID_ReadReg1"/>
+      <a name="width" val="5"/>
+    </comp>
+    <comp lib="0" loc="(570,320)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="IDEX_WriteReg"/>
+      <a name="width" val="5"/>
+    </comp>
+    <comp lib="0" loc="(570,350)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="IFID_ReadReg2"/>
+      <a name="width" val="5"/>
+    </comp>
+    <comp lib="0" loc="(570,400)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="IDEX_MemRead"/>
+    </comp>
+    <comp lib="0" loc="(880,340)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="HazardSignal"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="1" loc="(780,320)" name="OR Gate"/>
+    <comp lib="1" loc="(880,340)" name="AND Gate"/>
+    <comp lib="3" loc="(690,300)" name="Comparator">
+      <a name="mode" val="unsigned"/>
+      <a name="width" val="5"/>
+    </comp>
+    <comp lib="3" loc="(690,340)" name="Comparator">
+      <a name="mode" val="unsigned"/>
+      <a name="width" val="5"/>
+    </comp>
+    <wire from="(570,290)" to="(650,290)"/>
+    <wire from="(570,320)" to="(630,320)"/>
+    <wire from="(570,350)" to="(650,350)"/>
+    <wire from="(570,400)" to="(800,400)"/>
+    <wire from="(630,310)" to="(630,320)"/>
+    <wire from="(630,310)" to="(650,310)"/>
+    <wire from="(630,320)" to="(630,330)"/>
+    <wire from="(630,330)" to="(650,330)"/>
+    <wire from="(690,300)" to="(730,300)"/>
+    <wire from="(690,340)" to="(730,340)"/>
+    <wire from="(780,320)" to="(830,320)"/>
+    <wire from="(800,360)" to="(800,400)"/>
+    <wire from="(800,360)" to="(830,360)"/>
+  </circuit>
+  <circuit name="Forwarding_Unit">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="Forwarding_Unit"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="2.0"/>
   </circuit>
 </project>
