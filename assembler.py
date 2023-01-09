@@ -27,35 +27,78 @@ def get_instructions(input_file):
             line[-1] = line[-1].strip()
             
             if len(line) == 1:
-                if line[0].toupper() != 'RET':
-                    labels[line] = i
+                if line[0].upper() != 'RET':
+                    labels[line[0]] = i
                 else:
-                    instructions[i] = '10010000000000000000000000011110'
+                    instructions[i] = to_hex('10010000000000000000000000011110')
             if len(line) == 4:
                 opcode = ''
+                dst_reg = format(int(line[1][1:]), '05b')
+                reg_1 = format(int(line[2][1:]), '05b')
+                hexadecimal = ''
                 try:
-                    line[-1] = int(line[-1])
+                    line[3] = int(line[3])
                     opcode = get_opcode(line[0]+'imm')
-                except:
+                    imm = format(line[3], '011b')
+                    hexadeciaml = to_hex(opcode + imm + reg_1 + dst_reg)
+                except ValueError:
                     opcode = get_opcode(line[0]+'reg')
-
-                
-
-            opcode, imm = get_opcode(line[0])
-            dst_reg = format(int(line[1][1]), '02b')
-            reg_1 = format(int(line[2][1]), '02b')
-            last_8 = format(int(line[3]), '08b') if (imm) else format(int(line[3][1]), '02b') + '000000'
-
-            hexadecimal = to_hex(opcode + dst_reg + reg_1 + last_8)
-            instructions[i] = ((4 - len(hexadecimal)) * '0') + hexadecimal
+                    reg_2 = format(int(line[3][1:]), '05b')
+                    hexadecimal = to_hex(opcode + reg_2 + '111000' + reg_1 + dst_reg)
+                instructions[i] = (8 - len(hexadeciaml)) * '0' + hexadeciaml
             i += 1
+        i = 0
+        for line in input:
+            pass
     return instructions
 
 def get_opcode(command):
-    command = command.toupper()
+    command = command.upper()
     match command:
-        case "ADDIMM":
+        case 'ADDREG':
             return '00001010010'
+        case 'ADDIMM':
+            return '00001000010'
+        case 'SUBREG':
+            return '00001110010'
+        case 'SUBIMM':
+            return '0000100010'
+        case 'ANDREG':
+            return '00000010010'
+        case 'ANDIMM':
+            return '00000000010'
+        case 'ORRREG':
+            return '00000110010'
+        case 'ORRIMM':
+            return '00000100010'
+        case 'ADDSREG':
+            return '00011010010'
+        case 'ADDSIMM':
+            return '00011000010'
+        case 'SUBSREG':
+            return '00011110010'
+        case 'SUBSIMM':
+            return '00011100010'
+        case 'ANDSREG':
+            return '00010110010'
+        case 'ANDSIMM':
+            return '00010100010'
+        case 'LDRREG':
+            return '00001011010'
+        case 'LDRIMM':
+            return '00001001010'
+        case 'STRREG':
+            return '00001010110'
+        case 'STRIMM':
+            return '00001000110'
+        case 'B':
+            return '00110000000'
+        case 'BL':
+            return '00110000011'
+        case 'CBZ':
+            return '01010000000'
+        case 'RET':
+            return '10010000000'
 
 
 def to_hex(binary):
