@@ -25,40 +25,46 @@ def get_instructions(input_file):
         for line in input:
             line = line.split(' ')
             line[-1] = line[-1].strip()
-            #Split line, no all instructions will be the same length
+            
+            if len(line) == 1:
+                if line[0].toupper() != 'RET':
+                    labels[line] = i
+                else:
+                    instructions[i] = '10010000000000000000000000011110'
+            if len(line) == 4:
+                opcode = ''
+                try:
+                    line[-1] = int(line[-1])
+                    opcode = get_opcode(line[0]+'imm')
+                except:
+                    opcode = get_opcode(line[0]+'reg')
+
+                
+
             opcode, imm = get_opcode(line[0])
             dst_reg = format(int(line[1][1]), '02b')
             reg_1 = format(int(line[2][1]), '02b')
             last_8 = format(int(line[3]), '08b') if (imm) else format(int(line[3][1]), '02b') + '000000'
 
-            hex = to_hex(opcode + dst_reg + reg_1 + last_8)
-            instructions[i] = ((4 - len(hex)) * '0') + hex
+            hexadecimal = to_hex(opcode + dst_reg + reg_1 + last_8)
+            instructions[i] = ((4 - len(hexadecimal)) * '0') + hexadecimal
             i += 1
     return instructions
 
 def get_opcode(command):
-    command = command.upper()
-    if command == 'ADDREG':
-        return '0000', False
-    if command == 'SUBREG':
-        return '0010', False
-    if command == 'LDR':
-        return '0100', True
-    if command == 'STR':
-        return '0110', True
-    if command == 'ADDIMM':
-        return '1000', True
-    if command == 'SUBIMM':
-        return '1010', True
+    command = command.toupper()
+    match command:
+        case "ADDIMM":
+            return '00001010010'
+
 
 def to_hex(binary):
-    
     # convert binary to int
     dec = int(binary, 2)
       
     # convert int to hexadecimal
-    hex = format(dec, 'x')
-    return(hex)
+    hexadecimal = format(dec, 'x')
+    return(hexadecimal)
             
 
 if __name__ == '__main__':
