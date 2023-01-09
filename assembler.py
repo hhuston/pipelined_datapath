@@ -17,6 +17,7 @@ def get_instructions(input_file):
     instructions = ['00000000'] * 256 * 8
     labels = {}
     with open(input_file, 'r') as input:
+        input = input.read().split('\n')
         i = 0
         # find all labels first
         # perhaps do a first loop where each line is changed to its split version. If the length is one add it to labels
@@ -24,14 +25,13 @@ def get_instructions(input_file):
         # Then a second loop that takes care of all the branching commands that need their offsets to be calculated
         for line in input:
             line = line.split(' ')
-            line[-1] = line[-1].strip()
             
             if len(line) == 1:
                 if line[0].upper() != 'RET':
                     labels[line[0]] = i
                 else:
                     instructions[i] = to_hex('10010000000000000000000000011110')
-            if len(line) == 4:
+            elif len(line) == 4:
                 opcode = ''
                 dst_reg = format(int(line[1][1:]), '05b')
                 reg_1 = format(int(line[2][1:]), '05b')
@@ -40,16 +40,28 @@ def get_instructions(input_file):
                     line[3] = int(line[3])
                     opcode = get_opcode(line[0]+'imm')
                     imm = format(line[3], '011b')
-                    hexadeciaml = to_hex(opcode + imm + reg_1 + dst_reg)
+                    hexadecimal = to_hex(opcode + imm + reg_1 + dst_reg)
                 except ValueError:
                     opcode = get_opcode(line[0]+'reg')
                     reg_2 = format(int(line[3][1:]), '05b')
                     hexadecimal = to_hex(opcode + reg_2 + '111000' + reg_1 + dst_reg)
-                instructions[i] = (8 - len(hexadeciaml)) * '0' + hexadeciaml
+                input[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
             i += 1
         i = 0
         for line in input:
-            pass
+            line = line.split(' ')
+            if line[0].upper() == 'B' or line[0].upper() == 'BL':
+                opcode = get_opcode(line[0])
+                imm = format(labels[line[1]] - i, '011b')
+                hexadecimal = to_hex(opcode + imm + '0000011110')
+                input[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
+            elif line[0].upper() == 'CBZ':
+                opcode = get_opcode(line[0])
+                imm = format(labels[line[2]], '011b')
+                target_reg = format(int(line[1][1:]))
+                hexadecimal = to_hex(opcode + imm + '00000' + target_reg)
+                input[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
+            i += 1
     return instructions
 
 def get_opcode(command):
