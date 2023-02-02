@@ -2,15 +2,14 @@ def make_image(input_file, output_file):
     instructions = get_instructions(input_file)
     lines = []
     for i in range(256):
-        lines += [format(i * 8, 'x') + ': ']
+        lines += [format(i * 8, '03x') + ': ']
         for j in range(8):
-            lines[i] += instructions[(i * 16) + j]
+            lines[i] += instructions[(i * 8) + j]
             if j != 7:
                 lines[i] += ' '
             else:
                 lines[i] += '\n'
     lines = ['v3.0 hex words addressed\n'] + lines 
-    lines[1] = '0' + lines[1]
     open(output_file, 'w').writelines(lines)
             
 def get_instructions(input_file):
@@ -45,7 +44,7 @@ def get_instructions(input_file):
                     opcode = get_opcode(line[0]+'reg')
                     reg_2 = format(int(line[3][1:]), '05b')
                     hexadecimal = to_hex(opcode + reg_2 + '111000' + reg_1 + dst_reg)
-                input[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
+                instructions[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
             i += 1
         i = 0
         for line in input:
@@ -53,14 +52,16 @@ def get_instructions(input_file):
             if line[0].upper() == 'B' or line[0].upper() == 'BL':
                 opcode = get_opcode(line[0])
                 imm = format(labels[line[1]] - i, '011b')
+                if imm[0] == '-':
+                    imm = twos_comp(imm)
                 hexadecimal = to_hex(opcode + imm + '0000011110')
-                input[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
+                instructions[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
             elif line[0].upper() == 'CBZ':
                 opcode = get_opcode(line[0])
                 imm = format(labels[line[2]], '011b')
                 target_reg = format(int(line[1][1:]))
                 hexadecimal = to_hex(opcode + imm + '00000' + target_reg)
-                input[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
+                instructions[i] = (8 - len(hexadecimal)) * '0' + hexadecimal
             i += 1
     return instructions
 
@@ -120,7 +121,16 @@ def to_hex(binary):
     # convert int to hexadecimal
     hexadecimal = format(dec, 'x')
     return(hexadecimal)
-            
+    
+def twos_comp(binary):
+    out = ''
+    for bit in binary:
+        if bit == '0':
+            out += '1'
+        else:
+            out += '0'
+    out = out[:-1] + ('1' if out[-1] == '0' else '0')
+    return out
 
 if __name__ == '__main__':
     input_name = input("Write the name of a txt file to read instructions from (Must be in same directory as this assembler): ")

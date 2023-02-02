@@ -58,7 +58,6 @@
     <a name="simulationFrequency" val="2.0"/>
     <comp lib="0" loc="(1020,490)" name="Constant">
       <a name="facing" val="north"/>
-      <a name="value" val="0x4"/>
       <a name="width" val="11"/>
     </comp>
     <comp lib="0" loc="(1680,660)" name="Splitter">
@@ -299,7 +298,7 @@
       <a name="addrWidth" val="11"/>
       <a name="appearance" val="logisim_evolution"/>
       <a name="contents">addr/data: 11 32
-0
+0 a40e041 e40e041 300ff41e
 </a>
       <a name="dataWidth" val="32"/>
       <a name="label" val="Instruction_Memory"/>
