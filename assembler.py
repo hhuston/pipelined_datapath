@@ -66,6 +66,7 @@ def get_instructions(input_file):
     return instructions
 
 def get_opcode(command):
+    # Generates Opcode based on command
     command = command.upper()
     match command:
         case 'ADDREG':
